@@ -6,7 +6,7 @@ class App extends Component {
   render() {
     return (
       <div>
-      
+      {/* boostrap co ban */}
       <nav class="navbar navbar-inverse">
         <a class="navbar-brand" >Title</a>
         <ul class="nav navbar-nav">
