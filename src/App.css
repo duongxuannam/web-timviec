@@ -29,3 +29,13 @@
 .mt-30{
   margin-top: 30px
 }
+.mt-15{
+  margin-top: 15px
+}
+.text-right{
+  float: right;
+  margin-right: 5px;
+}
+.fa{
+  margin: 2px;
+}
