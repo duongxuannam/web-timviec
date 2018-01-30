@@ -4,6 +4,10 @@ import Item from './Item'
 class TaskList extends Component {
 
   render() {
+    const { data, capNhatStatus, xoaItem, capNhatItem } = this.props;
+    const hienthi = data.map((data, index)=>{
+      return <Item key={index} data = { data } index = {index} capNhatStatus = {capNhatStatus} xoaItem ={xoaItem} capNhatItem={capNhatItem} />
+    });
     return (
         <table class="table table-bordered table-hover">
         <thead>
@@ -29,10 +33,7 @@ class TaskList extends Component {
             </td>
             <td></td>
           </tr>
-       <Item/>
-       <Item/>
-       <Item/>
-       <Item/>
+      { hienthi }
         </tbody>
       </table>
     );
