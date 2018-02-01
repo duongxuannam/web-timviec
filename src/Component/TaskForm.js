@@ -19,6 +19,22 @@ class TaskForm extends Component {
       })
     }
   };
+  componentWillReceiveProps(nextProps){
+    console.log('willReceiveProps ne : ',nextProps.itemDangChinhSua)
+    if(nextProps.itemDangChinhSua){
+      this.setState({
+        id: nextProps.itemDangChinhSua.id,
+        name: nextProps.itemDangChinhSua.name,
+        status: nextProps.itemDangChinhSua.status
+      })
+    }else if ( nextProps.itemDangChinhSua === null){
+      this.setState({
+        id: '',
+        name: '',
+        status: ''
+      })
+    }
+  }
   dongCuaSo = () => {
     const stateHandle = {
       id: '',
@@ -37,14 +53,13 @@ class TaskForm extends Component {
   };
   onSubmit = (event) => {
     event.preventDefault();
-    this.props.onSubmit(this.state);
-    const stateHandle = {
+    const stateHandle = this.state;
+    this.setState({
       id: '',
       name: '',
       status: true
-    }
-    this.setState(stateHandle)
-
+    })
+    this.props.onSubmit(stateHandle);
   };
   render() {
     const { id } = this.state;

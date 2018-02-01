@@ -11,6 +11,13 @@ class App extends Component {
       data: [],
       hienThiCuaSo: false,
       itemDangChinhSua: null,
+      loc: {
+        locTheoTen: '',
+        locTheoTrangThai: -1
+      },
+      tuKhoa: '',
+      tenSapXep: '',
+      giaTriSapXep: '',
     }
   }
   componentWillMount() {
@@ -23,9 +30,11 @@ class App extends Component {
   };
 
   hienThiCuaSo = () => {
-    this.setState({
-      hienThiCuaSo: !this.state.hienThiCuaSo
-    })
+    if (this.state.hienThiCuaSo !== true) {
+      this.setState({
+        hienThiCuaSo: !this.state.hienThiCuaSo
+      })
+    }
   };
 
   dongCuaSo = () => {
@@ -62,21 +71,22 @@ class App extends Component {
 
   onSubmit = (data) => {
     const dataHandle = this.state.data;
-    if(data.id === ''){
-    const today = new Date();
-    const dulieu = {
-      id: today.getTime(),
-      name: data.name,
-      status: data.status
-    };
+    if (data.id === '') {
+      const today = new Date();
+      const dulieu = {
+        id: today.getTime(),
+        name: data.name,
+        status: data.status
+      };
       dataHandle.push(dulieu);
-    }else{
+    } else {
       const index = this.findIndex(data.id);
       dataHandle[index] = data
     }
     this.setState({
       data: dataHandle,
       hienThiCuaSo: false,
+      itemDangChinhSua: null
     });
     localStorage.setItem('data', JSON.stringify(dataHandle))
   };
@@ -113,7 +123,7 @@ class App extends Component {
     }
     this.dongCuaSo()
   }
-  capNhatItem = (id) =>{
+  capNhatItem = (id) => {
     const { data } = this.state;
     const index = this.findIndex(id);
     const itemDangChinhSua = data[index];
@@ -123,10 +133,68 @@ class App extends Component {
     });
     this.hienThiCuaSo();
   }
-
+  buttonThem = () => {
+    this.setState({
+      itemDangChinhSua: null
+    });
+    this.hienThiCuaSo()
+  }
+  locData = (locTheoTen, locTheoTrangThai) => {
+    locTheoTrangThai = parseInt(locTheoTrangThai, 10);
+    this.setState({
+      loc: {
+        locTheoTen: locTheoTen.toLowerCase(),
+        locTheoTrangThai: locTheoTrangThai
+      }
+    })
+  };
+  timKiem = (tuKhoa) => {
+    this.setState({
+      tuKhoa: tuKhoa
+    });
+  };
+  sapXep = (ten, trangthai) => {
+   this.setState({
+     tenSapXep: ten,
+     giaTriSapXep: trangthai
+   })
+  };
+ 
   render() {
-    const { data, hienThiCuaSo, itemDangChinhSua } = this.state;
-    const hienthi = hienThiCuaSo ? <TaskForm dongCuaSo={this.dongCuaSo} onSubmit={this.onSubmit} itemDangChinhSua={itemDangChinhSua}/> : '';
+    let { data, hienThiCuaSo, itemDangChinhSua, loc, tuKhoa, tenSapXep, giaTriSapXep } = this.state;
+    if (loc) {
+      if (loc.locTheoTen) {
+        data = data.filter((item) => {
+          return item.name.toLowerCase().indexOf(loc.locTheoTen) !== -1;
+        });
+      }
+      data = data.filter((item) => {
+        if (loc.locTheoTrangThai === -1) {
+          return item;
+        } else {
+          return item.status === (loc.locTheoTrangThai === 1 ? true : false)
+        }
+      })
+    }
+    if (tuKhoa){
+      data = data.filter((item) => {
+        return item.name.toLowerCase().indexOf(tuKhoa) !== -1;
+      })
+    }
+    if(tenSapXep === 'ten'){
+      data.sort((a, b)=>{
+        if(a.name < b.name) return giaTriSapXep;
+        else if(a.name > b.name) return - giaTriSapXep;
+        else return 0
+      })
+    }else{
+      data.sort((a, b)=>{
+        if(a.status < b.status) return - giaTriSapXep;
+        else if(a.status > b.status) return  giaTriSapXep;
+        else return 0
+      })
+    }
+    const hienthi = hienThiCuaSo ? <TaskForm dongCuaSo={this.dongCuaSo} onSubmit={this.onSubmit} itemDangChinhSua={itemDangChinhSua} /> : '';
     return (
       <div class="container">
         <div class='text-center' >
@@ -135,7 +203,7 @@ class App extends Component {
         <div class="row">
           {hienthi}
           <div class={hienThiCuaSo ? "col-xs-8 col-sm-8 col-md-8 col-lg-8" : "col-xs-12 col-sm-12 col-md-12 col-lg-12"}>
-            <button type="button" class="btn btn-primary" onClick={this.hienThiCuaSo}>
+            <button type="button" class="btn btn-primary" onClick={this.buttonThem}>
               <span class='fa fa-plus mr-5'></span>
               Them cong viec
             </button>&nbsp;
@@ -144,11 +212,11 @@ class App extends Component {
               Tao du lieu mau
             </button>
             <br /><br />
-            <Control />
+            <Control timKiem = { this.timKiem } sapXep = { this.sapXep } />
             <br /><br /><br />
             <div class="row">
               <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <TaskList data={data} capNhatStatus={this.capNhatStatus} xoaItem={this.xoaItem} capNhatItem={this.capNhatItem} />
+                <TaskList data={data} capNhatStatus={this.capNhatStatus} xoaItem={this.xoaItem} capNhatItem={this.capNhatItem} locData={this.locData} />
               </div>
             </div>
 

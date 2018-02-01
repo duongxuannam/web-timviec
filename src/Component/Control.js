@@ -6,8 +6,8 @@ class Control extends Component {
   render() {
     return (
         <div class=''>
-             <Search/>
-             <Sort/>
+             <Search  timKiem = { this.props.timKiem }/>
+             <Sort sapXep = { this.props.sapXep } />
             </div>
     );
   }
