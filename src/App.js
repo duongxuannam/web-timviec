@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import TaskForm from './Component/TaskForm';
 import Control from './Component/Control';
 import TaskList from './Component/TaskList';
@@ -92,7 +93,10 @@ class App extends Component {
   };
   capNhatStatus = (id) => {
     const { data } = this.state;
-    const index = this.findIndex(id);
+    //const index = this.findIndex(id);
+    const index = _.findIndex(data, (item) =>{
+      return item.id === id
+    })
     if (index !== -1) {
       data[index].status = !data[index].status;
       this.setState({
@@ -177,7 +181,10 @@ class App extends Component {
       })
     }
     if (tuKhoa){
-      data = data.filter((item) => {
+      // data = data.filter((item) => {
+      //   return item.name.toLowerCase().indexOf(tuKhoa) !== -1;
+      // })
+      data = _.filter(data,(item)=> {
         return item.name.toLowerCase().indexOf(tuKhoa) !== -1;
       })
     }
