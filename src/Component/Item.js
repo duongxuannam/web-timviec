@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { updateStatus, deleteItem, closeForm, openForm, editItem } from '../Action/index';
 
 class Item extends Component {
 
   capNhatStatus = () => {
-    this.props.capNhatStatus(this.props.data.id);
+    this.props.onUpdateStatus(this.props.data.id);
   }
   xoaItem = () => {
-    this.props.xoaItem(this.props.data.id);
+    this.props.onDeleteItem(this.props.data.id);
+    this.props.onCloseForm();
   }
   capNhatItem = () => {
-    this.props.capNhatItem(this.props.data.id);
+    this.props.onOpenForm(); 
+    this.props.onEditItem(this.props.data);
   }
   render() {
     const { data, index } = this.props;
@@ -36,4 +40,29 @@ class Item extends Component {
   }
 }
 
-export default Item;
+const mapStateToProps = (state) =>{
+  return {
+
+  }
+};
+const mapDispatchToProps = (dispatch, props) => {
+  return{
+    onUpdateStatus : (id) => {
+      dispatch(updateStatus(id));
+    },
+    onDeleteItem: (id) => {
+      dispatch(deleteItem(id))
+    },
+    onCloseForm : () => {
+      dispatch(closeForm())
+    },
+    onOpenForm : () => {
+      dispatch(openForm())
+    },
+    onEditItem : (data) => {
+      dispatch(editItem(data))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Item);

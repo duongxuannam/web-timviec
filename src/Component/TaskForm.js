@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { addData, closeForm } from '../Action/index';
 
 class TaskForm extends Component {
   constructor(props){
@@ -10,24 +12,24 @@ class TaskForm extends Component {
     }
   };
   componentWillMount(){
-    console.log('willmount ne : ',this.props.itemDangChinhSua)
-    if(this.props.itemDangChinhSua){
+    console.log('willmount ne : ',this.props.itemEditing)
+    if(this.props.itemEditing){
       this.setState({
-        id: this.props.itemDangChinhSua.id,
-        name: this.props.itemDangChinhSua.name,
-        status: this.props.itemDangChinhSua.status
+        id: this.props.itemEditing.id,
+        name: this.props.itemEditing.name,
+        status: this.props.itemEditing.status
       })
     }
   };
   componentWillReceiveProps(nextProps){
-    console.log('willReceiveProps ne : ',nextProps.itemDangChinhSua)
-    if(nextProps.itemDangChinhSua){
+    console.log('willReceiveProps ne : ',nextProps.itemEditing)
+    if(nextProps.itemEditing){
       this.setState({
-        id: nextProps.itemDangChinhSua.id,
-        name: nextProps.itemDangChinhSua.name,
-        status: nextProps.itemDangChinhSua.status
+        id: nextProps.itemEditing.id,
+        name: nextProps.itemEditing.name,
+        status: nextProps.itemEditing.status
       })
-    }else if ( nextProps.itemDangChinhSua === null){
+    }else if ( nextProps.itemEditing === null){
       this.setState({
         id: '',
         name: '',
@@ -36,14 +38,7 @@ class TaskForm extends Component {
     }
   }
   dongCuaSo = () => {
-    const stateHandle = {
-      id: '',
-      name: '',
-      status: true
-    }
-    this.setState(stateHandle)
-    console.log('cai id sau khi dong: ',this.state.id)
-    this.props.dongCuaSo();
+    this.props.onCloseForm();
   }
   luuData = (event) => {
     const { name, value } = event.target;
@@ -51,19 +46,23 @@ class TaskForm extends Component {
       [name]: value
     });
   };
-  onSubmit = (event) => {
-    event.preventDefault();
-    const stateHandle = this.state;
+  onClear  = ()=>{
     this.setState({
       id: '',
       name: '',
-      status: true
+      status: false
     })
-    this.props.onSubmit(stateHandle);
+  }
+  onSubmit = (event) => {
+    event.preventDefault();
+    this.props.onAddData(this.state);
+    this.onClear();
+    this.dongCuaSo();
   };
   render() {
     const { id } = this.state;
-    console.log('id sau khi render xong: ', id)
+    console.log('id sau khi render xong: ', id);
+    if(!this.props.hienThiCuaSo) return '';
     return (
         <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
             <div class="panel panel-warning">
@@ -105,4 +104,22 @@ class TaskForm extends Component {
   }
 }
 
-export default TaskForm;
+const mapStateToProps = (state) =>{
+  return {
+    hienThiCuaSo : state.hienThiCuaSo,
+    itemEditing: state.itemEditing
+  }
+};
+const mapDispatchToProps = (dispatch, props) => {
+  return{
+    onAddData : (data) =>{
+      dispatch(addData(data));
+    },
+    onCloseForm : () => {
+      dispatch(closeForm())
+    },
+
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskForm);

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Item from './Item'
+import { connect } from 'react-redux';
+import Item from './Item';
 
 class TaskList extends Component {
   constructor(props){
@@ -17,10 +18,10 @@ class TaskList extends Component {
     });
   }
   render() {
-    const { data, capNhatStatus, xoaItem, capNhatItem } = this.props;
+    const { data, capNhatItem } = this.props;
     const { locTheoTen, locTheoTrangThai } = this.state;
     const hienthi = data.map((data, index)=>{
-      return <Item key={index} data = { data } index = {index} capNhatStatus = {capNhatStatus} xoaItem ={xoaItem} capNhatItem={capNhatItem} />
+      return <Item key={index} data = { data } index = {index} />
     });
     return (
         <table class="table table-bordered table-hover">
@@ -54,4 +55,10 @@ class TaskList extends Component {
   }
 }
 
-export default TaskList;
+const mapStateToProps = (state) => {
+  return { 
+     data  : state.data
+   }
+}
+
+export default connect(mapStateToProps, null)(TaskList);
